@@ -38,7 +38,7 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       run: |
-        echo "${{ secrets.AWS_ACCESS_KEY_ID }}" | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_PASSWORD }}
+        echo "${{ secrets.AWS_ACCESS_KEY_ID }}" | docker login --username AWS --password-stdin public.ecr.aws/d9t4l3j8
 
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
