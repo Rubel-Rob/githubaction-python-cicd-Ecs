@@ -43,6 +43,7 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       id: build-image
       run: |
+        echo "$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA  "
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA
 
