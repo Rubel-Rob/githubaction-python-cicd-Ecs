@@ -56,7 +56,7 @@ jobs:
       run: |
         sed -i "s|${{ env.ECR_URL }}/ecr-eastus1-dev-salesforce:[^ ]*|${{ env.ECR_URL }}/ecr-eastus1-dev-salesforce:${{ github.sha }}|" ${ECS_TASK_DEFINITION}
         cat ${ECS_TASK_DEFINITION}
-        aws ecs register-task-definition file://${ECS_TASK_DEFINITION} 
+        aws ecs register-task-definition --family taskdef-eastus1-dev-salesforce  file://${ECS_TASK_DEFINITION} 
 
     - name: Deploy ECS task definition
       run: |
