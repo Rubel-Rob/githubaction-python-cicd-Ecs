@@ -54,7 +54,7 @@ jobs:
 
     - name: Update ECS task definition
       run: |
-        sed -i "s|${{ env.CONTAINER_NAME }}.*:${{ github.sha }}|${{ env.CONTAINER_NAME }}:${{ steps.build-image.outputs.digest }}|" ${ECS_TASK_DEFINITION} # Updated path
+        sed -i "s|${{ env.ECR_URL }}/ecr-eastus1-dev-salesforce:${{ github.sha}}|${{ env.ECR_URL }}/ecr-eastus1-dev-salesforce:${{ steps.buildimage.outputs.digest}}|" ${ECS_TASK_DEFINITION}
         aws ecs register-task-definition --cli-input-json file://${ECS_TASK_DEFINITION} --force-new-deployment
 
     - name: Deploy ECS task definition
