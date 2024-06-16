@@ -49,13 +49,13 @@ jobs:
       run: |
         echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  "
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        echo "aws ecr-public describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION"
+        aws ecr-public describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Update ECS task definition
       run: |
-        sed -i "s|${{ env.CONTAINER_NAME }}.*:${{ github.sha }}|${{ env.CONTAINER_NAME }}:${{ steps.build-image.outputs.digest }}|" ${ECS_TASK_DEFINITION_TEMPLATE} # Updated path
-        aws ecs register-task-definition --cli-input-json file://${ECS_TASK_DEFINITION_TEMPLATE} --force-new-deployment
+        sed -i "s|${{ env.CONTAINER_NAME }}.*:${{ github.sha }}|${{ env.CONTAINER_NAME }}:${{ steps.build-image.outputs.digest }}|" ${ECS_TASK_DEFINITION} # Updated path
+        aws ecs register-task-definition --cli-input-json file://${ECS_TASK_DEFINITION} --force-new-deployment
 
     - name: Deploy ECS task definition
       run: |
