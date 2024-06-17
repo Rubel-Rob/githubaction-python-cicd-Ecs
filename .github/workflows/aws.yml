@@ -10,9 +10,9 @@ env:
   ECS_SERVICE: ${{ vars.ECS_SERVICE }}                # set this to your Amazon ECS service name
   ECS_CLUSTER: ${{ vars.ECS_CLUSTER  }}               # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: ${{ vars.ECS_TASK_DEFINITION }} # set this to the path to your Amazon ECS task definition
-                                                   # file, e.g..aws/task-definition.json
+                                                     # file, e.g.,.aws/task-definition.json
   CONTAINER_NAME: ${{ vars.CONTAINER_NAME   }}        # set this to the name of the container in the
-                                                   # containerDefinitions section of your task definition
+                                                     # containerDefinitions section of your task definition
 
 permissions:
   contents: read
@@ -51,19 +51,19 @@ jobs:
         echo "aws ecr-public describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Create artifact with ECR details
-      uses: actions/upload-artifact@v2
+    -  name: Create artifact with ECR details
+       uses: actions/upload-artifact@v2
        with:
         name: ecr-details
         path: ecr-details.json
-      run: |
-        echo "{\"ECR_REGISTRY\":\"$ECR_REGISTRY\",\"IMAGE_TAG\":\"$IMAGE_TAG\"}" > ecr-details.json
+        run: |
+         echo "{\"ECR_REGISTRY\":\"$ECR_REGISTRY\",\"IMAGE_TAG\":\"$IMAGE_TAG\"}" > ecr-details.json
 
     - name: Download ECR details
       uses: actions/download-artifact@v2
       with:
         name: ecr-details
-         path:.
+        path: .
 
     - name: Update ECS task definition and Deploy
       run: |
