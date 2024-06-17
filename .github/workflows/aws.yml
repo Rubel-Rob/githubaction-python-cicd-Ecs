@@ -55,7 +55,7 @@ jobs:
     - name: Update ECS task definition and Deploy
       run: |
        echo $ECR_URL:$IMAGE_TAG
-       TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_DEFINITION_NAME" --region "${AWS_REGION}")
+       TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION" --region "${AWS_REGION}")
        NEW_CONTAINER_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_URL:$IMAGE_TAG" '.taskDefinition.containerDefinitions[0].image = $IMAGE | .taskDefinition.containerDefinitions[0]')
        echo "Registering new container definition..."
        aws ecs register-task-definition --region "${AWS_REGION}" --family "${TASK_DEFINITION_NAME}" --container-definitions "${NEW_CONTAINER_DEFINTIION}"
