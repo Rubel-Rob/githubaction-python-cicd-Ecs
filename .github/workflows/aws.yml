@@ -52,12 +52,12 @@ jobs:
         echo "aws ecr-public describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Update ECS task definition
+    - name: Update ECS task definition and Deploy
       run: |
-        sed -i "s|${{ env.ECR_URL }}/ecr-eastus1-dev-salesforce:[^ ]*|${{ env.ECR_URL }}/ecr-eastus1-dev-salesforce:${{ github.sha }}|" ${ECS_TASK_DEFINITION}
-        cat ${ECS_TASK_DEFINITION}
-        aws ecs register-task-definition --family taskdef-eastus1-dev-salesforce --region "us-east-1" --cli-input-json ${ECS_TASK_DEFINITION}
-
-    - name: Deploy ECS task definition
-      run: |
-        aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
+       echo $ECR_URL:$IMAGE_TAG
+       TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$TASK_DEFINITION_NAME" --region "${AWS_REGION}")
+       NEW_CONTAINER_DEFINTIION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_URL:$IMAGE_TAG" '.taskDefinition.containerDefinitions[0].image = $IMAGE | .taskDefinition.containerDefinitions[0]')
+       echo "Registering new container definition..."
+       aws ecs register-task-definition --region "${AWS_REGION}" --family "${TASK_DEFINITION_NAME}" --container-definitions "${NEW_CONTAINER_DEFINTIION}"
+       echo "Updating the service..."
+       aws ecs update-service --region "${AWS_REGION}" --cluster "${ECS_CLUSTER}" --service "${ECS_SERVICE}"  --task-definition "${TASK_DEFINITION_NAME}"
