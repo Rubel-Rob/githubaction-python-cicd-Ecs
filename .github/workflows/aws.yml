@@ -76,3 +76,4 @@ jobs:
        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION" --region "${AWS_REGION}")
        NEW_CONTAINER_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REGISTRY/$REPO:$TAG" '.taskDefinition.containerDefinitions[0].image = $IMAGE |.taskDefinition.containerDefinitions[0]')
        aws ecs register-task-definition --region "${AWS_REGION}" --family "${ECS_TASK_DEFINITION}" --container-definitions "${NEW_CONTAINER_DEFINITION}" --memory 1GB
+       aws ecs update-service --region "${AWS_REGION}" --cluster "${ECS_CLUSTER}" --service "${ECS_SERVICE}"  --task-definition "${ECS_TASK_DEFINITION}"
