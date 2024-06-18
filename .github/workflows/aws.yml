@@ -73,5 +73,5 @@ jobs:
        REGISTRY=$(cat ecr-details.json | jq -r '.ECR_REGISTRY')
        TAG=$(cat ecr-details.json | jq -r '.IMAGE_TAG')
        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition "$ECS_TASK_DEFINITION" --region "${AWS_REGION}")
-       NEW_CONTAINER_DEFINITION=$(echo $TASK_DEFINITION | jq --arg REGISTRY "$REGISTRY" --arg TAG "$TAG" '.taskDefinition.containerDefinitions[0].image = "'"$REGISTRY"'/"$TAG'" |.taskDefinition.containerDefinitions[0]')
+       NEW_CONTAINER_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$REGISTRY:$TAG" '.taskDefinition.containerDefinitions[0].image = $IMAGE |.taskDefinition.containerDefinitions[0]')
        aws ecs register-task-definition --region "${AWS_REGION}" --family "${ECS_TASK_DEFINITION}" --container-definitions "${NEW_CONTAINER_DEFINITION}" --memory 1GB
